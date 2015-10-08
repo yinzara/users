@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.ruby.rubyproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/ruby-project/1">
+            <name>users</name>
+            <source-roots>
+                <root id="src.dir" name="libraries"/>
+                <root id="providers.dir"/>
+                <root id="recipes.dir"/>
+                <root id="resources.dir"/>
+                <root id="tasks.dir"/>
+                <root id="templates.dir"/>
+            </source-roots>
+            <test-roots>
+                <root id="test.src.dir" name="test"/>
+                <root id="test.spec.dir"/>
+            </test-roots>
+        </data>
+    </configuration>
+</project>
