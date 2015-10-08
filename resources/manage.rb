@@ -26,7 +26,7 @@ state_attrs :cookbook,
             :group_id,
             :group_name,
             :search_group,
-            :environments
+            :require_environment
 
 # :data_bag is the object to search
 # :search_group is the groups name to search for, defaults to resource name
