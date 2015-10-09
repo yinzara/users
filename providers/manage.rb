@@ -42,7 +42,7 @@ action :remove do
       end
     end
     
-    search(new_resource.data_bag, "groups:#{new_resource.search_group} AND NOT action:remove AND !environment:all AND !environment:#{node.chef_environment}") do |rm_user|
+    search(new_resource.data_bag, "groups:#{new_resource.search_group} AND NOT action:remove AND NOT environment:all AND NOT environment:#{node.chef_environment}") do |rm_user|
       user rm_user['username'] ||= rm_user['id'] do
         action :lock
         ignore_failure true
