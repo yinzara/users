@@ -26,7 +26,7 @@ state_attrs :cookbook,
             :group_id,
             :group_name,
             :search_group,
-            :require_environment
+            :require_environments
 
 # :data_bag is the object to search
 # :search_group is the groups name to search for, defaults to resource name
@@ -39,4 +39,4 @@ attribute :group_name, kind_of: String, name_attribute: true
 attribute :group_id, kind_of: Integer
 attribute :cookbook, kind_of: String, default: 'users'
 attribute :manage_nfs_home_dirs, kind_of: [TrueClass, FalseClass], default: true
-attribute :require_environment, kind_of: [TrueClass, FalseClass], default: false
+attribute :require_environments, kind_of: [TrueClass, FalseClass], default: false
