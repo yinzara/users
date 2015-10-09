@@ -60,7 +60,7 @@ action :create do
   else
     search_query = "groups:#{new_resource.search_group}"    
     search_query << " AND (environments:all OR environments:#{node.chef_environment})" if new_resource.require_environments 
-    search_query = " AND NOT action:remove"
+    search_query << " AND NOT action:remove"
     search(new_resource.data_bag, search_query) do |u|
       u['username'] ||= u['id']
       security_group << u['username']
