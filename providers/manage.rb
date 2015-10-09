@@ -42,7 +42,7 @@ action :remove do
       end
     end
     
-    search(new_resource.data_bag, "groups:#{new_resource.search_group} AND NOT action:remove AND NOT environment:all AND NOT environment:#{node.chef_environment}") do |rm_user|
+    search(new_resource.data_bag, "groups:#{new_resource.search_group} AND NOT (action:remove OR environments:all OR environments:#{node.chef_environment})") do |rm_user|
       user rm_user['username'] ||= rm_user['id'] do
         action :lock
         ignore_failure true
@@ -58,8 +58,9 @@ action :create do
   if Chef::Config[:solo] && !chef_solo_search_installed?
     Chef::Log.warn('This recipe uses search. Chef Solo does not support search unless you install the chef-solo-search cookbook.')
   else
-    search_query = "groups:#{new_resource.search_group} AND NOT action:remove"    
-    search_query << " AND (environments:all OR environments:#{node.chef_environment})" if new_resource.require_environments    
+    search_query = "groups:#{new_resource.search_group}"    
+    search_query << " AND (environments:all OR environments:#{node.chef_environment})" if new_resource.require_environments 
+    search_query = " AND NOT action:remove"
     search(new_resource.data_bag, search_query) do |u|
       u['username'] ||= u['id']
       security_group << u['username']
