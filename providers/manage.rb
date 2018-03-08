@@ -54,10 +54,19 @@ end
 
 action :create do
   security_group = []
+  all_keys = []
 
   if Chef::Config[:solo] && !chef_solo_search_installed?
     Chef::Log.warn('This recipe uses search. Chef Solo does not support search unless you install the chef-solo-search cookbook.')
   else
+    # Set home_basedir based on platform_family
+    case node['platform_family']
+      when 'mac_os_x'
+        home_basedir = '/Users'
+      when 'debian', 'rhel', 'fedora', 'arch', 'suse', 'freebsd', 'openbsd', 'slackware', 'gentoo'
+        home_basedir = '/home'
+    end
+
     search_query = "groups:#{new_resource.search_group}"    
     search_query << " AND (environments:all OR environments:#{node.chef_environment})" if new_resource.require_environments 
     search_query << " AND NOT action:remove"
@@ -71,21 +80,9 @@ action :create do
         end
       end
 
-      # Set home_basedir based on platform_family
-      case node['platform_family']
-      when 'mac_os_x'
-        home_basedir = '/Users'
-      when 'debian', 'rhel', 'fedora', 'arch', 'suse', 'freebsd', 'openbsd', 'slackware', 'gentoo'
-        home_basedir = '/home'
-      end
-
       # Set home to location in data bag,
-      # or a reasonable default ($home_basedir/$user).
-      if u['home']
-        home_dir = u['home']
-      else
-        home_dir = "#{home_basedir}/#{u['username']}"
-      end
+      # or a reasonable default ($home_basedir/$user)
+      home_dir = u['home'] || "#{home_basedir}/#{u['username']}"
 
       # The user block will fail if the group does not yet exist.
       # See the -g option limitations in man 8 useradd for an explanation.
@@ -131,6 +128,8 @@ action :create do
           only_if { u['ssh_keys'] }
         end
 
+        all_keys += u['ssh_keys'] if u['ssh_key']
+
         if u['ssh_private_key']
           key_type = u['ssh_private_key'].include?('BEGIN RSA PRIVATE KEY') ? 'rsa' : 'dsa'
           template "#{home_dir}/.ssh/id_#{key_type}" do
@@ -158,6 +157,34 @@ action :create do
         Chef::Log.debug("Not managing home files for #{u['username']}")
       end
     end
+
+    if node['tags'].include?(new_resource.git_tag)
+      group new_resource.git_group do
+      end
+
+      user new_resource.git_user do
+        gid new_resource.git_group
+        shell new_resource.git_shell
+        comment 'Git user with all certificates'
+        home "#{home_basedir}/#{new_resource.git_user}"
+      end
+
+      directory "#{home_dir}/.ssh" do
+        owner new_resource.git_user
+        group new_resource.git_group
+        mode '0700'
+      end
+
+      template "#{home_basedir}/#{new_resource.git_user}/.ssh/authorized_keys" do
+        source 'authorized_keys.erb'
+        cookbook new_resource.cookbook
+        owner new_resource.git_user
+        group new_resource.git_group
+        mode '0600'
+        variables ssh_keys: all_keys
+      end
+    end
+
   end
 
   group new_resource.group_name do

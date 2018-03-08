@@ -40,3 +40,7 @@ attribute :group_id, kind_of: Integer
 attribute :cookbook, kind_of: String, default: 'users'
 attribute :manage_nfs_home_dirs, kind_of: [TrueClass, FalseClass], default: true
 attribute :require_environments, kind_of: [TrueClass, FalseClass], default: false
+attribute :git_user, kind_of: String, default: 'git'
+attribute :git_group, kind_of: String, default: 'git'
+attribute :git_shell, kind_of: String, default: '/sbin/nologin'
+attribute :git_tag, kind_of: String, default: 'gitrepo'
