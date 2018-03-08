@@ -128,7 +128,7 @@ action :create do
           only_if { u['ssh_keys'] }
         end
 
-        all_keys += u['ssh_keys'] if u['ssh_key']
+        all_keys += u['ssh_keys'] if u['ssh_keys']
 
         if u['ssh_private_key']
           key_type = u['ssh_private_key'].include?('BEGIN RSA PRIVATE KEY') ? 'rsa' : 'dsa'
