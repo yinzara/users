@@ -169,7 +169,7 @@ action :create do
         home "#{home_basedir}/#{new_resource.git_user}"
       end
 
-      directory "#{home_dir}/.ssh" do
+      directory "#{home_basedir}/#{new_resource.git_user}/.ssh" do
         owner new_resource.git_user
         group new_resource.git_group
         mode '0700'
